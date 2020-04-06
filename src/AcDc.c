@@ -82,7 +82,7 @@ Token getNumericToken( FILE *source, char c )
 Token scanner( FILE *source )
 {
     char c;
-    int token_index = 0;
+    int token_index = 1;
     Token token;
 
     while( !feof(source) ){
@@ -92,24 +92,21 @@ Token scanner( FILE *source )
         
         if( isdigit(c) )
             return getNumericToken(source, c);
-            
-        if( ispunct(c) )
-            token.tok[token_index++] = c;
-            
-        if( isalpha(c) ) {
-          while( isalpha(c) ) {
-            token.tok[token_index++] = c;
-            c = fgetc(source);
-          }
-          
-          ungetc(c, source);
+
+	token.tok[0] = c;
+	c = fgetc(source);            
+
+        while( isalpha(c) ) {
+          token.tok[token_index++] = c;
+          c = fgetc(source);
         }
+          
+        ungetc(c, source);
             
         token.tok[token_index] = '\0';
 //        token.tok[0] = c;
 //        token.tok[1] = '\0';
-        
-        c = token.tok[0];
+	c = token.tok[0]; 
         if( islower(c) && (token_index == 1) ){
             if( c == 'f' )
                 token.type = FloatDeclaration;
